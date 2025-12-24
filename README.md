@@ -147,7 +147,7 @@ The dataset does not contain an explicit sentiment label. Sentiment is therefore
 
 ---
 ### 4.4 Final output
-![Pipeline Architecture](images/label_dist.png)
+![Sentiment Labels](images/label_dist.png)
 
 
 ## 5. Data Quality Logging & Observability
@@ -261,6 +261,9 @@ This approach enables safer scaling, improved model performance, and production-
 
 ## 6. Running the Pipeline
 
+The entire environment is **containerized with Docker**. No local dependency installation is required.
+
+
 ### Prerequisites
 - Docker
 - Docker Compose
@@ -287,5 +290,15 @@ make bash
 # Launch Jupyter Lab
 make jupyter
 ```
+Once the services are running, access the Airflow UI at:
+```
+http://localhost:8080
 
+```
+From the UI you can:
+- Trigger DAG runs
+- Inspect task logs
+- View retries and failures
+- Monitor historical runs
 
+![Airflow Dag Graph](images/dag.png)
