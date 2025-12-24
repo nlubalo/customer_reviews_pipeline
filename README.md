@@ -146,6 +146,9 @@ The dataset does not contain an explicit sentiment label. Sentiment is therefore
 ➡ Result in `NULL / None` sentiment labels rather than hard failures.
 
 ---
+### 4.4 Final output
+![Pipeline Architecture](images/label_dist.png)
+
 
 ## 5. Data Quality Logging & Observability
 
