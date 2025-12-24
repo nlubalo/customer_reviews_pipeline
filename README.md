@@ -10,7 +10,34 @@ The objective of this pipeline is to:
 - Produce a **reliable, reproducible training dataset**
 - Ensure data quality through validation checks and logging
 
+The final output is a cleaned, deduplicated, English-only, sentiment-labeled dataset suitable for
+Sentiment classification
+
 ---
+
+## Table of Contents
+
+1. [Data Ingestion](#1-data-ingestion)
+2. [Pre-Cleaning Data Quality Assessment](#2-pre-cleaning-data-quality-assessment)
+3. [Data Cleaning & Transformation Steps](#3-data-cleaning--transformation-steps)
+   - [3.1 Language Filtering (English-only Training)](#31-language-filtering-english-only-training)
+   - [3.2 Link Detection & Removal](#32-link-detection--removal)
+   - [3.3 Text Standardization](#33-text-standardization)
+   - [3.4 Deduplication](#34-deduplication)
+4. [Sentiment Annotation](#4-sentiment-annotation)
+   - [4.1 Rating Normalization](#41-rating-normalization)
+   - [4.2 Sentiment Mapping Rules](#42-sentiment-mapping-rules)
+   - [4.3 Unknown Handling](#43-unknown-handling)
+5. [Data Quality Logging & Observability](#5-data-quality-logging--observability)
+   - [5.1 Logged Data Quality Signals](#51-logged-data-quality-signals)
+     - [5.1.1 Null Value Analysis](#511-null-value-analysis)
+     - [5.1.2 Duplicate Detection](#512-duplicate-detection)
+     - [5.1.3 Label Distribution Monitoring](#513-label-distribution-monitoring)
+   - [5.2 Logging Strategy](#52-logging-strategy)
+   - [5.3 Logging vs Enforcement](#53-logging-vs-enforcement)
+   - [5.4 Summary](#54-summary)
+6. [Running the Pipeline](#6-running-the-pipeline)
+
 
 ## 1. Data Ingestion
 
@@ -215,6 +242,7 @@ During early development and exploration phases:
 - Hard enforcement would block iteration
 
 As baselines stabilize, selected checks can be **promoted from logging → enforcement**.
+
 ---
 
 ### 5.4 Summary
@@ -257,6 +285,4 @@ make bash
 make jupyter
 ```
 
-7. Output
-The final output is a cleaned, deduplicated, English-only, sentiment-labeled dataset suitable for
-Sentiment classification
+
