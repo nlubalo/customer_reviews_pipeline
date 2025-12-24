@@ -120,7 +120,115 @@ The dataset does not contain an explicit sentiment label. Sentiment is therefore
 
 ---
 
-## 5. Running the Pipeline
+## 5. Data Quality Logging & Observability
+
+Rather than failing the pipeline on all data quality issues, this pipeline follows an **observability-first approach** by **logging key data quality signals** and monitoring them over time.
+
+This design:
+- Supports Airflow-friendly monitoring
+- Enables auditing and run-to-run comparison
+- Avoids unnecessary pipeline failures during exploration and model iteration
+
+Hard failures are reserved only for issues that **block correctness**.
+
+---
+
+### 5.1 Logged Data Quality Signals
+
+The following data quality dimensions are logged on every pipeline run.
+
+---
+
+#### 5.1.1 Null Value Analysis
+
+**Metrics Logged**
+- Column-level null percentages
+- Row-level null ratios
+
+**Purpose**
+- Detect schema drift
+- Identify partially ingested or corrupted rows
+- Guard deduplication and downstream modeling logic
+
+**Example Signals**
+- Columns exceeding configured null thresholds
+- Percentage of rows containing at least one null value
+
+> Null checks are enforced only when they impact correctness (e.g. deduplication safety). Otherwise, they are logged for observability.
+
+---
+
+#### 5.1.2 Duplicate Detection
+
+**Metrics Logged**
+- Total record count
+- Duplicate record count
+- Duplicate ratio (%)
+
+**Detection Keys**
+- Configurable business keys (e.g. `product_id`, `user_id`, `review_content_clean`)
+
+**Purpose**
+- Identify copy-paste or spam reviews
+- Detect ingestion retries or upstream duplication
+- Quantify data inflation risk
+
+Deduplication is applied **only after validating row-level null ratios** to prevent accidental data loss.
+
+---
+
+#### 5.1.3 Label Distribution Monitoring
+
+**Metrics Logged**
+- Sentiment label counts and percentages:
+  - `negative`
+  - `neutral`
+  - `positive`
+
+**Purpose**
+- Detect class imbalance
+- Monitor label drift across ingestion dates
+- Support downstream model stability checks
+
+Label distributions are logged and compared across runs. No hard failures are triggered.
+
+---
+
+### 5.2 Logging Strategy
+
+- Logs are emitted using **structured, Airflow-friendly logging**
+- No `print()` statements are used
+- Metrics are designed to be:
+  - Human-readable in Airflow logs
+  - Machine-comparable across DAG runs
+
+This enables both manual inspection and automated trend analysis.
+
+---
+
+### 5.3 Logging vs Enforcement
+
+During early development and exploration phases:
+
+- No historical baseline exists
+- Data quality patterns are still being learned
+- Hard enforcement would block iteration
+
+As baselines stabilize, selected checks can be **promoted from logging → enforcement**.
+---
+
+### 5.4 Summary
+
+This pipeline treats data quality as a **continuous signal**, not a one-time gate:
+
+- Measure first
+- Observe trends
+- Enforce later
+
+This approach enables safer scaling, improved model performance, and production-ready data governance.
+
+
+## 6. Running the Pipeline
 
 ### Prerequisites
 - Docker
@@ -147,41 +255,8 @@ make bash
 
 # Launch Jupyter Lab
 make jupyter
+```
 
-
-6. Output
-The final output is a cleaned, deduplicated, English-only, sentiment-labeled dataset suitable for:
+7. Output
+The final output is a cleaned, deduplicated, English-only, sentiment-labeled dataset suitable for
 Sentiment classification
-
-
-
-
-
-
-
-
-
-
-
-
-
-# How to Run the Pipeline
-=======================
-
-
-# 1. Initialize Airflow DB and admin
-make init
-
-# 2. Start Airflow
-make up
-
-make down
-
-# 3. Check logs if needed
-make logs
-
-# 4. Bash into webserver
-make bash
-
-# 5. Launch Jupyter Lab
-make jupyter
