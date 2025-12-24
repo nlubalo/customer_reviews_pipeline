@@ -8,6 +8,8 @@ The goal of this pipeline is to **standardize text, annotate data, enforce data 
 
 ## 1. Data Ingestion
 
+---
+
 - Raw data is ingested from a CSV file.
 - The dataset contains structured fields (e.g. `product_id`, `user_id`, `rating`) and unstructured text fields (e.g. review content and titles).
 - Initial ingestion preserves all rows to avoid early data loss.
@@ -17,7 +19,7 @@ Before applying any cleaning or transformation logic, an **initial data profilin
 
 Below are the **observed data issues**, their impact, and why each required explicit handling in the cleaning pipeline.
 
-### 1. Duplicate Reviews
+#### 1. Duplicate Reviews
 
 - Multiple reviews share the same:
   - `product_id`
@@ -25,7 +27,7 @@ Below are the **observed data issues**, their impact, and why each required expl
   - `review_id`
   - Review text (or near-identical text) - Some of the duplicate products have exact same review text and others have near duplicates with variations 'spam' like product links
 
-### 2. Mixed-Language Reviews (Non-English Content)
+#### 2. Mixed-Language Reviews (Non-English Content)
 
 - Review text may contain:
   - Fully non-English reviews
@@ -33,31 +35,30 @@ Below are the **observed data issues**, their impact, and why each required expl
 - Languages are **not limited to a known set**
   - e.g. Hindi, regional scripts, emojis, symbols
 
-  ##### This Risks Causing
-- Reduced NLP model accuracy
-- Tokenization failures
-- Language bias in embeddings
 
-### 4. Null Rows
+#### 4. Null Rows
 - The dataset doesn't have a large number of missing values. Only two records have null
 in the `rating_count` column
-- Since the number of null rows is very small, these records can be safely removed without impacting the dataset quality, However given that the `rating_count` column is not used in the downstream task, this step is optional and so I chose to keep these records in the dataset.
+- Since the number of null rows is very small, these records can be safely removed without impacting the dataset quality. However,given that the `rating_count` column is not used in the downstream task, this step is optional and so I chose to keep these records in the dataset.
 
-### 5. Non numerical value in rating column
+#### 5. Non numerical value in rating column
 - The rating column is meant to be numerical in a range of 1-5. However, there are some records with non numerical values such as '|`
 - These records need to be removed to ensure data quality.
 
 
 
 ## 3. Data Cleaning Steps
+
+---
+
 The following cleaning steps are applied:
 
-### 1. Language Filtering (English-only Training)
+#### 1. Language Filtering (English-only Training)
 - Since all reviews of a product are concatenated together, theReviews may contain **mixed-language content within a single field**
 - Only **English text is retained for model training**
 - Non-English segments are removed rather than dropping the entire review
 
-### 2. Link Detection & Removal
+#### 2. Link Detection & Removal
 - Review content is checked for embedded URLs or product links
 - Any detected links are removed from the text
 
@@ -68,25 +69,25 @@ The following text columns are standardized:
 - `about_product`
 
 For each text column, the following transformations are applied:
-1. Convert values to string
-2. Convert text to lowercase
-3. Remove HTML tags
-4. Remove URLs and links
-5. Remove special characters and punctuation
-6. Normalize whitespace
-7. Trim leading and trailing spaces
+- Convert values to string
+- Convert text to lowercase
+- Remove HTML tags
+- Remove URLs and links
+- Remove special characters and punctuation
+- Normalize whitespace
+- Trim leading and trailing spaces
 
-### 4 Drop Duplicates
+#### 4 Drop Duplicates
 With the review text cleaned and standardized, duplicates are identified and removed:
 - Exact duplicate reviews are removed based on the combination of:
   - `product_id`
   - `user_id`
   - Cleaned `review_content` text
 
-### 5 Sentiment Annotation
+#### 5 Sentiment Annotation
 The dataset does not contain an explicit sentiment label. Sentiment is therefore **derived from the numeric rating** using a simple, rule-based approach.
 
-### Annotation Steps
+#### Annotation Steps
 
 1. **Rating normalization**
    - The `rating` column is converted to a numeric type.
