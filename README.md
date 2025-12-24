@@ -33,7 +33,6 @@ Sentiment classification
      - [5.1.1 Null Value Analysis](#511-null-value-analysis)
      - [5.1.2 Duplicate Detection](#512-duplicate-detection)
      - [5.1.3 Label Distribution Monitoring](#513-label-distribution-monitoring)
-   - [5.2 Logging Strategy](#52-logging-strategy)
    - [5.3 Logging vs Enforcement](#53-logging-vs-enforcement)
    - [5.4 Summary](#54-summary)
 6. [Running the Pipeline](#6-running-the-pipeline)
@@ -44,7 +43,7 @@ Sentiment classification
 - Raw data is ingested from a CSV source.
 - The dataset contains:
   - **Structured fields**: `product_id`, `user_id`, `rating`
-  - **Unstructured text fields**: review content, review title, product description
+  - **Unstructured text fields**: `review content`, `review title`, `product description`
 - All rows are preserved at ingestion time to avoid premature data loss.
 
 ---
@@ -224,19 +223,7 @@ Label distributions are logged and compared across runs. No hard failures are tr
 
 ---
 
-### 5.2 Logging Strategy
-
-- Logs are emitted using **structured, Airflow-friendly logging**
-- No `print()` statements are used
-- Metrics are designed to be:
-  - Human-readable in Airflow logs
-  - Machine-comparable across DAG runs
-
-This enables both manual inspection and automated trend analysis.
-
----
-
-### 5.3 Logging vs Enforcement
+### 5.2 Logging vs Enforcement
 
 During early development and exploration phases:
 
@@ -258,6 +245,7 @@ This pipeline treats data quality as a **continuous signal**, not a one-time gat
 
 This approach enables safer scaling, improved model performance, and production-ready data governance.
 
+----
 
 ## 6. Running the Pipeline
 
