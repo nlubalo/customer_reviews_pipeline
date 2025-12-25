@@ -3,6 +3,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime
 import sys
+
 sys.path.append("/opt/airflow/src")
 
 from clean_job import clean_training_dataset
@@ -26,7 +27,7 @@ with DAG(
         python_callable=clean_training_dataset,
         op_kwargs={
             "input_path": "/opt/airflow/data/amazon.csv",
-            "output_path": "/opt/airflow/data/training_data"
+            "output_path": "/opt/airflow/data/training_data",
         },
     )
 

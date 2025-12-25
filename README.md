@@ -146,6 +146,11 @@ The dataset does not contain an explicit sentiment label. Sentiment is therefore
 
 ---
 ### 4.4 Final output
+Final cleaned dataset contains the following key columns:
+- `product_id`
+- `review_content_en_clean`
+- `sentiment` (derived label)
+
 ![Sentiment Labels](images/label_dist.png)
 
 
