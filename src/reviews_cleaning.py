@@ -67,25 +67,6 @@ class DataCleaner:
         )
 
     @staticmethod
-    def duplicate_ratio(df: pd.DataFrame, subset_cols):
-        total_records = len(df)
-
-        if total_records == 0:
-            return {
-                "total_records": 0,
-                "duplicate_records": 0,
-                "duplicate_percentage": 0.0,
-            }
-
-        duplicate_records = df.duplicated(subset=subset_cols, keep=False).sum()
-
-        return {
-            "total_records": total_records,
-            "duplicate_records": duplicate_records,
-            "duplicate_percentage": round((duplicate_records / total_records) * 100, 2),
-        }
-
-    @staticmethod
     def log_duplicate_ratio(df: pd.DataFrame, subset_cols: list) -> None:
         """
         Calculates and logs duplication stats.
