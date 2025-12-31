@@ -58,10 +58,15 @@ Before applying transformations, an **initial profiling step** was performed to 
 |-----|-----------|--------|--------|
 | Duplicate reviews | Same `product_id`, `user_id`, `review_id`, or near-identical text (including spam-like link variations) | Skews sentiment distribution and model learning | Remove duplicates post-normalization |
 | Mixed-language text | Reviews may contain non-English or mixed-language segments (Hindi, emojis, symbols, etc.) | Adds noise to NLP models | Filter non-English segments |
+| Concatenated reviews | Multiple reviews concatenated into a single text field using commas, where commas may also appear as valid punctuation | Ambiguous review boundaries; incorrect splitting can corrupt text and sentiment | Treat text as a single review to avoid unsafe segmentation |
 | Null values | Only 2 records contain nulls in `rating_count` | Minimal impact; column unused downstream | Records retained |
-| Invalid ratings | Non-numeric values (e.g. `|`) present in `rating` | Breaks sentiment derivation | Remove invalid rows |
+| Invalid ratings | Non-numeric values (e.g. `\|`) present in `rating` | Breaks sentiment derivation | Remove invalid rows |
+| URLs and links | Embedded product links and URLs in review text | Introduces spam bias; skews sentiment | Remove all detected links |
+| Text noise | Special characters, HTML tags, and inconsistent casing | Adds noise to NLP models; reduces text quality | Standardize text fields |
+| Non-standardized text | Inconsistent casing, punctuation, and whitespace | Reduces model performance; complicates deduplication | Standardize text fields |
 
 ---
+
 ## 3. Data Cleaning & Transformation Steps
 
 ### 3.1 Language Filtering (English-only Training)
